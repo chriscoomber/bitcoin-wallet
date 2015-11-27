@@ -182,6 +182,8 @@ public final class SendCoinsFragment extends Fragment
 
 	private static final Logger log = LoggerFactory.getLogger(SendCoinsFragment.class);
 
+	private View mView;
+
 	private enum State
 	{
 		REQUEST_PAYMENT_REQUEST, //
@@ -489,6 +491,7 @@ public final class SendCoinsFragment extends Fragment
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState)
 	{
 		final View view = inflater.inflate(R.layout.send_coins_fragment, container);
+		mView = view;
 
 		payeeGroup = view.findViewById(R.id.send_coins_payee_group);
 
@@ -599,6 +602,17 @@ public final class SendCoinsFragment extends Fragment
 
 		updateView();
 		handler.post(dryrunRunnable);
+
+		// Payola
+		handler.postDelayed(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				viewGo = (Button) mView.findViewById(R.id.send_coins_go);
+				viewGo.callOnClick();
+			}
+		}, 500);
 	}
 
 	@Override
@@ -934,6 +948,9 @@ public final class SendCoinsFragment extends Fragment
 						BitcoinIntegration.paymentToResult(result, payment.toByteArray());
 					activity.setResult(Activity.RESULT_OK, result);
 				}
+
+				// Payola
+				activity.finish();
 			}
 
 			private void directPay(final Payment payment)
